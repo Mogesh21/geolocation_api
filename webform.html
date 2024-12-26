@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geolocation API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer>
+      const domain = "https://geolocation.eazyresumebuilder.com/server";
+      let current = 0;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".button");
+        const results = document.querySelectorAll(".result");
+        buttons.forEach((button, index) => {
+          button.addEventListener("click", async (event) => {
+            results.forEach((result, residx) => {
+              if (index !== residx) result.innerHTML = "";
+            });
+            current = index;
+            console.log(current);
+          });
+        });
+      });
+
+      const getToken = async (event) => {
+        event.preventDefault();
+        try {
+          const tokenEmail = document.getElementById("token-email").value;
+          const tokenName = document.getElementById("token-name").value;
+          const tokenApplication = document.getElementById("token-application").value;
+          const tokenPassword = document.getElementById("token-password").value;
+
+          const url = `${domain}/create-token`;
+          console.log(url, tokenName, tokenEmail, tokenApplication, tokenPassword);
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: tokenName,
+              email: tokenEmail,
+              application: tokenApplication,
+              password: tokenPassword,
+            }),
+          });
+          const result = await response.json();
+
+          const newTab = window.open("", "_blank");
+          newTab.document.title = result.message;
+          newTab.document.write("<pre>" + JSON.stringify(result, null, 2) + "</pre>");
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const getCountries = async (event) => {
+        event.preventDefault();
+        try {
+          const countryId = document.getElementById("country-id").value;
+          const countryName = document.getElementById("country-name").value;
+          const search = document.getElementById("country-search").value;
+          const token = document.getElementById("country-token").value;
+
+          let url;
+          if (countryId) url = `${domain}/countries?id=${countryId}`;
+          else if (countryName) url = `${domain}/countries?name=${countryName}`;
+          else if (search) url = `${domain}/countries?search=${search}`;
+          else url = `${domain}/countries`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          });
+          const result = await response.json();
+
+          const newTab = window.open("", "_blank");
+          newTab.document.title = result.message;
+          newTab.document.write("<pre>" + JSON.stringify(result, null, 2) + "</pre>");
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const getStates = async (event) => {
+        event.preventDefault();
+        try {
+          const stateCountryId = document.getElementById("state-country_id").value;
+          const stateId = document.getElementById("state-id").value;
+          const stateName = document.getElementById("state-name").value;
+          const search = document.getElementById("state-search").value;
+          const token = document.getElementById("state-token").value;
+
+          let url;
+          if (stateCountryId && search)
+            url = `${domain}/states?country_id=${stateCountryId}&&search=${search}`;
+          else if (stateCountryId) url = `${domain}/states?country_id=${stateCountryId}`;
+          else if (stateId) url = `${domain}/states?id=${stateId}`;
+          else if (stateName) url = `${domain}/states?name=${stateName}`;
+          else if (search) url = `${domain}/states?search=${search}`;
+          else url = `${domain}/states`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          });
+          const result = await response.json();
+
+          const newTab = window.open("", "_blank");
+          newTab.document.title = result.message;
+          newTab.document.write("<pre>" + JSON.stringify(result, null, 2) + "</pre>");
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const getCities = async (event) => {
+        event.preventDefault();
+        try {
+          const cityStateId = document.getElementById("city-state_id").value;
+          const cityId = document.getElementById("city-id").value;
+          const cityName = document.getElementById("city-name").value;
+          const search = document.getElementById("city-search").value;
+          const token = document.getElementById("city-token").value;
+
+          let url;
+          if (cityStateId && search)
+            url = `${domain}/cities?state_id=${cityStateId}&&search=${search}`;
+          else if (cityStateId) url = `${domain}/cities?state_id=${cityStateId}`;
+          else if (cityId) url = `${domain}/cities?id=${cityId}`;
+          else if (cityName) url = `${domain}/cities?name=${cityName}`;
+          else if (search) url = `${domain}/cities?search=${search}`;
+          else url = `${domain}/cities`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              token: token,
+            },
+          });
+          const result = await response.json();
+
+          const newTab = window.open("", "_blank");
+          newTab.document.title = result.message;
+          newTab.document.write("<pre>" + JSON.stringify(result, null, 2) + "</pre>");
+        } catch (err) {
+          console.log(err);
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <form
+      method="POST"
+      onsubmit="getToken(event)"
+      class="form w-100 flex flex-col h-auto m-2 border border-black"
+    >
+      <div class="m-2 w-100">
+        <p class="title text-xl font-bold underline text-green-700">Create Access Token</p>
+        <div class="mainDiv w-100">
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="url">API URL</label>
+            <label>https://geolocation.eazyresumebuilder.com/server/create-token</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="method">Method</label>
+            <label class="font-semibold text-red-700">POST</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="content-type">Content-type</label>
+            <label>application/json</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="mode">API Mode</label>
+            <label>Development</label>
+          </div>
+        </div>
+      </div>
+      <table class="w-100 border m-1">
+        <thead class="text-center uppercase bg-black text-white">
+          <tr class="border-b">
+            <th class="p-1 border-r border-white">Field</th>
+            <th class="p-1 border-r border-white">Value</th>
+            <th class="p-1 border-r border-white">Variable Name</th>
+            <th class="p-1 border-r border-white">Mandatory</th>
+            <th class="p-1 border-r border-white">Table</th>
+            <th class="p-1 border-r border-white">Note</th>
+            <th class="p-1 border-r border-black">Sample</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="border-b">
+            <td class="p-1 border-r">Name</td>
+            <td class="p-1 border-r">
+              <input id="token-name" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">name</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">User Name</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Email</td>
+            <td class="p-1 border-r">
+              <input id="token-email" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">email</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">User or App Email</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Application name</td>
+            <td class="p-1 border-r">
+              <input id="token-application" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">application</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">Application Name</td>
+            <td class="p-1 border-r">MathApp</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Root Password</td>
+            <td class="p-1 border-r">
+              <input id="token-password" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">password</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">Unique Root Password</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="w-100 flex justify-center">
+        <button class="button p-2 py-1 m-1 border border-black w-fit bg-red-400" type="submit">
+          POST
+        </button>
+      </div>
+      <div class="result flex justify-center"></div>
+    </form>
+
+    <form
+      method="GET"
+      onsubmit="getCountries(event)"
+      class="form w-100 flex flex-col h-auto m-2 border border-black"
+    >
+      <div class="m-2 w-100">
+        <p class="title text-xl font-bold underline text-green-700">Countries</p>
+        <div class="mainDiv w-100">
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="url">API URL</label>
+            <label
+              ><a href="https://geolocation.eazyresumebuilder.com/server/countries"
+                >https://geolocation.eazyresumebuilder.com/server/countries</a
+              ></label
+            >
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="method">Method</label>
+            <label class="font-semibold text-green-700">GET</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="content-type">Content-type</label>
+            <label>application/json</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="mode">API Mode</label>
+            <label>Development</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="description">Description</label>
+            <label>Getting all the Countries in the world</label>
+          </div>
+        </div>
+      </div>
+      <table class="w-100 border m-1">
+        <thead class="text-center uppercase bg-black text-white">
+          <tr class="border-b">
+            <th class="p-1 border-r border-white">Field</th>
+            <th class="p-1 border-r border-white">Value</th>
+            <th class="p-1 border-r border-white">Variable Name</th>
+            <th class="p-1 border-r border-white">Mandatory</th>
+            <th class="p-1 border-r border-white">Table</th>
+            <th class="p-1 border-r border-white">Note</th>
+            <th class="p-1 border-r border-black">Sample</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="border-b">
+            <td class="p-1 border-r">Auth Token</td>
+            <td class="p-1 border-r">
+              <input id="country-token" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">token</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">Required for each request</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Id</td>
+            <td class="p-1 border-r">
+              <input id="country-id" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">countries</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific country</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Name</td>
+            <td class="p-1 border-r">
+              <input id="country-name" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">name</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">countries</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific country by their name</td>
+            <td class="p-1 border-r">India</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Search</td>
+            <td class="p-1 border-r">
+              <input id="country-search" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">search</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">countries</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific country by their name</td>
+            <td class="p-1 border-r">India</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="w-100 flex justify-center">
+        <button class="button p-2 py-1 m-1 border border-black w-fit bg-green-400" type="submit">
+          GET
+        </button>
+      </div>
+      <div class="result flex justify-center"></div>
+    </form>
+
+    <form
+      method="GET"
+      onsubmit="getStates(event)"
+      class="form w-100 flex flex-col h-auto m-2 border border-black"
+    >
+      <div class="m-2 w-100">
+        <p class="title text-xl font-bold underline text-green-700">States</p>
+        <div class="mainDiv w-100">
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="url">API URL</label>
+            <label
+              ><a href="https://geolocation.eazyresumebuilder.com/server/states"
+                >https://geolocation.eazyresumebuilder.com/server/states</a
+              ></label
+            >
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="method">Method</label>
+            <label class="font-semibold text-green-700">GET</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="content-type">Content-type</label>
+            <label>application/json</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="mode">API Mode</label>
+            <label>Development</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="description">Description</label>
+            <label>Getting all the States</label>
+          </div>
+        </div>
+      </div>
+      <table class="w-100 border m-1">
+        <thead class="text-center uppercase bg-black text-white">
+          <tr class="border-b">
+            <th class="p-1 border-r border-white">Field</th>
+            <th class="p-1 border-r border-white">Value</th>
+            <th class="p-1 border-r border-white">Variable Name</th>
+            <th class="p-1 border-r border-white">Mandatory</th>
+            <th class="p-1 border-r border-white">Table</th>
+            <th class="p-1 border-r border-white">Note</th>
+            <th class="p-1 border-r border-black">Sample</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="border-b">
+            <td class="p-1 border-r">Auth Token</td>
+            <td class="p-1 border-r">
+              <input id="state-token" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">token</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">Required for each request</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Country Id</td>
+            <td class="p-1 border-r">
+              <input id="state-country_id" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">country_id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">states</td>
+            <td class="p-1 border-r max-w-40 break-words">Get all states</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Id</td>
+            <td class="p-1 border-r">
+              <input id="state-id" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">states</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific state with their id</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Name</td>
+            <td class="p-1 border-r">
+              <input id="state-name" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">name</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">states</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific state by their name</td>
+            <td class="p-1 border-r">Tamil Nadu</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Search</td>
+            <td class="p-1 border-r">
+              <input id="state-search" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">search</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">states</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific state by their name</td>
+            <td class="p-1 border-r">Tamil Nadu</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="w-100 flex justify-center">
+        <button class="button p-2 py-1 m-1 border border-black w-fit bg-green-400" type="submit">
+          GET
+        </button>
+      </div>
+      <div class="result flex justify-center"></div>
+    </form>
+
+    <form
+      method="GET"
+      onsubmit="getCities(event)"
+      class="form w-100 flex flex-col h-auto m-2 border border-black"
+    >
+      <div class="m-2 w-100">
+        <p class="title text-xl font-bold underline text-green-700">Cities</p>
+        <div class="mainDiv w-100">
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="url">API URL</label>
+            <label
+              ><a href="https://geolocation.eazyresumebuilder.com/server/cities"
+                >https://geolocation.eazyresumebuilder.com/server/cities</a
+              ></label
+            >
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="method">Method</label>
+            <label class="font-semibold text-green-700">GET</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="content-type">Content-type</label>
+            <label>application/json</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="mode">API Mode</label>
+            <label>Development</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="description">Description</label>
+            <label>Getting cities in the world</label>
+          </div>
+        </div>
+      </div>
+      <table class="w-100 border m-1">
+        <thead class="text-center uppercase bg-black text-white">
+          <tr class="border-b">
+            <th class="p-1 border-r border-white">Field</th>
+            <th class="p-1 border-r border-white">Value</th>
+            <th class="p-1 border-r border-white">Variable Name</th>
+            <th class="p-1 border-r border-white">Mandatory</th>
+            <th class="p-1 border-r border-white">Table</th>
+            <th class="p-1 border-r border-white">Note</th>
+            <th class="p-1 border-r border-black">Sample</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="border-b">
+            <td class="p-1 border-r">Auth Token</td>
+            <td class="p-1 border-r">
+              <input id="city-token" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">token</td>
+            <td class="p-1 border-r">YES</td>
+            <td class="p-1 border-r"></td>
+            <td class="p-1 border-r max-w-40 break-words">Required for each request</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">State Id</td>
+            <td class="p-1 border-r">
+              <input id="city-state_id" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">state_id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get cities of specific state</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Id</td>
+            <td class="p-1 border-r">
+              <input id="city-id" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific city with their id</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Name</td>
+            <td class="p-1 border-r">
+              <input id="city-name" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">name</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific city by their name</td>
+            <td class="p-1 border-r">Coimbatore</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Search</td>
+            <td class="p-1 border-r">
+              <input id="city-search" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">search</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific city by their name</td>
+            <td class="p-1 border-r">Coimbatore</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="w-100 flex justify-center">
+        <button class="button p-2 py-1 m-1 border border-black w-fit bg-green-400" type="submit">
+          GET
+        </button>
+      </div>
+      <div class="result flex justify-center"></div>
+    </form>
+
+    <!-- <form
+      method="GET"
+      onsubmit="getPosts(event)"
+      class="form w-100 flex flex-col h-auto m-2 border border-black"
+    >
+      <div class="m-2 w-100">
+        <p class="title text-xl font-bold underline text-green-700">Citites with Pincode</p>
+        <div class="mainDiv w-100">
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="url">API URL</label>
+            <label
+              ><a href="http://localhost:3005/api/types">http://localhost:3005/api/types</a></label
+            >
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="method">Method</label>
+            <label class="font-semibold text-green-700">GET</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="content-type">Content-type</label>
+            <label>application/json</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="mode">API Mode</label>
+            <label>Development</label>
+          </div>
+          <div class="p-1 row w-auto flex">
+            <label class="w-32 font-semibold" name="description">Description</label>
+            <label>Getting all the types</label>
+          </div>
+        </div>
+      </div>
+      <table class="w-100 border m-1">
+        <thead class="text-center uppercase bg-black text-white">
+          <tr class="border-b">
+            <th class="p-1 border-r border-white">Field</th>
+            <th class="p-1 border-r border-white">Value</th>
+            <th class="p-1 border-r border-white">Variable Name</th>
+            <th class="p-1 border-r border-white">Mandatory</th>
+            <th class="p-1 border-r border-white">Table</th>
+            <th class="p-1 border-r border-white">Note</th>
+            <th class="p-1 border-r border-black">Sample</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr class="border-b">
+            <td class="p-1 border-r">Country Id</td>
+            <td class="p-1 border-r">
+              <input id="topic-gradeid" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">country_id</td>
+            <td class="p-1 border-r">No</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get all countries</td>
+            <td class="p-1 border-r"></td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">State Id</td>
+            <td class="p-1 border-r">
+              <input id="topic-topicid" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">state_id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get cities of specific state</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Id</td>
+            <td class="p-1 border-r">
+              <input id="topic-topicid" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">id</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific city with their id</td>
+            <td class="p-1 border-r">1</td>
+          </tr>
+          <tr class="border-b">
+            <td class="p-1 border-r">Name</td>
+            <td class="p-1 border-r">
+              <input id="topic-topicid" class="border p-1" type="text" />
+            </td>
+            <td class="p-1 border-r">name</td>
+            <td class="p-1 border-r">NO</td>
+            <td class="p-1 border-r">cities</td>
+            <td class="p-1 border-r max-w-40 break-words">Get specific city by their name</td>
+            <td class="p-1 border-r">Coimbatore</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="w-100 flex justify-center">
+        <button class="button p-2 py-1 m-1 border border-black w-fit bg-green-400" type="submit">
+          GET
+        </button>
+      </div>
+      <div class="result flex justify-center"></div>
+    </form> -->
+  </body>
+</html>
